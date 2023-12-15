@@ -12,12 +12,8 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 
 Route::apiResource('products', ProductController::class);
 
-// routes/web.php または routes/api.php
-Route::get('/products', [ProductController::class, 'index'])->name('product.index');
-Route::get('/carts', [CartController::class, 'index'])->name('cart.index');
-
-
 Route::post('/line-items', [LineItemController::class, 'create']);
+
 
 // カートの内容を取得する
 Route::get('/cart', [CartController::class, 'index']);
@@ -30,3 +26,6 @@ Route::delete('/line-items/{lineItem}', [LineItemController::class, 'destroy']);
 
 // 決済画面へのルート定義
 Route::get('/cart/checkout', [CartController::class, 'checkout']);
+
+// 決済後のカートを空にするルート定義
+Route::post('/cart/clear', [CartController::class, 'clearCart']);

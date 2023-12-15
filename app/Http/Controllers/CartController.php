@@ -60,13 +60,13 @@ class CartController extends Controller
             ];
             array_push($line_items, $line_item);
         }
-
+        
         \Stripe\Stripe::setApiKey(env('STRIPE_SECRET_KEY'));
-
+        
         $session = \Stripe\Checkout\Session::create([
             'payment_method_types' => ['card'],
             'line_items'           => $line_items,
-            'success_url'          => env('APP_URL') . '/cart',
+            'success_url'          => env('APP_URL') . '/cart?payment_success=true',
             'cancel_url'           => env('APP_URL') . '/cart',
             'mode'                 => 'payment',
         ]);
@@ -75,6 +75,19 @@ class CartController extends Controller
             'sessionId' => $session->id,
             'publicKey' => env('STRIPE_PUBLIC_KEY')
         ]);
+    }
+
+    public function clearCart(Request $request)
+    {
+        $cartId = Session::get('cart');
+        $cart = Cart::find($cartId);
+
+        if ($cart) {
+            // カートの中身を削除
+            $cart->products()->detach();
+            return response()->json(['message' => 'Cart cleared successfully']);
+        }
+        return response()->json(['message' => 'Cart not found'], 404);
     }
 }
 

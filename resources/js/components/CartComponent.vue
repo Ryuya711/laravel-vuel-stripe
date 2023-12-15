@@ -30,6 +30,9 @@
         <div v-else class="empty-cart">
             <p>カートに商品が入っていません。</p>
         </div>
+        <div class="link-container">
+            <router-link :to="`/`" >商品リストへ戻る</router-link>
+        </div>
     </div>
 </template>
 
@@ -45,9 +48,16 @@ export default {
         };
     },
     created() {
+        this.checkPaymentSuccess();
         this.fetchCartItems();
     },
     methods: {
+        checkPaymentSuccess() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('payment_success') === 'true') {
+                this.clearCartItems();
+            }
+        },
         fetchCartItems() {
             axios.get('/api/cart')
                 .then(response => {
@@ -56,6 +66,16 @@ export default {
                 })
                 .catch(error => {
                     console.error('カートデータの取得に失敗しました:', error);
+                });
+        },
+        clearCartItems() {
+            axios.post('/api/cart/clear')
+                .then(() => {
+                    this.cartItems = [];
+                    this.totalPrice = 0;
+                })
+                .catch(error => {
+                    console.error('カートのクリアに失敗しました:', error);
                 });
         },
         removeItem(itemId) {
@@ -72,7 +92,7 @@ export default {
                 .then(response => {
                 // Stripeの公開可能キーを設定
                 const stripe = Stripe(response.data.publicKey);
-
+                
                 // Stripeのチェックアウトページにリダイレクト
                 stripe.redirectToCheckout({
                     sessionId: response.data.sessionId
@@ -144,5 +164,10 @@ export default {
     cursor: pointer;
     border: none;
     border-radius: 4px;
+}
+
+.link-container {
+    display: block;
+    text-align: right;
 }
 </style>

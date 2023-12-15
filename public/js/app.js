@@ -20247,9 +20247,16 @@ __webpack_require__.r(__webpack_exports__);
     };
   },
   created: function created() {
+    this.checkPaymentSuccess();
     this.fetchCartItems();
   },
   methods: {
+    checkPaymentSuccess: function checkPaymentSuccess() {
+      var urlParams = new URLSearchParams(window.location.search);
+      if (urlParams.get('payment_success') === 'true') {
+        this.clearCartItems();
+      }
+    },
     fetchCartItems: function fetchCartItems() {
       var _this = this;
       axios__WEBPACK_IMPORTED_MODULE_0__["default"].get('/api/cart').then(function (response) {
@@ -20259,10 +20266,19 @@ __webpack_require__.r(__webpack_exports__);
         console.error('カートデータの取得に失敗しました:', error);
       });
     },
-    removeItem: function removeItem(itemId) {
+    clearCartItems: function clearCartItems() {
       var _this2 = this;
+      axios__WEBPACK_IMPORTED_MODULE_0__["default"].post('/api/cart/clear').then(function () {
+        _this2.cartItems = [];
+        _this2.totalPrice = 0;
+      })["catch"](function (error) {
+        console.error('カートのクリアに失敗しました:', error);
+      });
+    },
+    removeItem: function removeItem(itemId) {
+      var _this3 = this;
       axios__WEBPACK_IMPORTED_MODULE_0__["default"]["delete"]("/api/line-items/".concat(itemId)).then(function () {
-        _this2.fetchCartItems(); // カートのアイテムを再取得
+        _this3.fetchCartItems(); // カートのアイテムを再取得
       })["catch"](function (error) {
         console.error('削除に失敗しました');
       });
@@ -20434,7 +20450,11 @@ var _hoisted_9 = /*#__PURE__*/_withScopeId(function () {
   return /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("p", null, "カートに商品が入っていません。", -1 /* HOISTED */);
 });
 var _hoisted_10 = [_hoisted_9];
+var _hoisted_11 = {
+  "class": "link-container"
+};
 function render(_ctx, _cache, $props, $setup, $data, $options) {
+  var _component_router_link = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("router-link");
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [_hoisted_2, $data.cartItems.length ? ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_4, [_hoisted_5, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", null, [((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)($data.cartItems, function (item) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("tr", {
       key: item.product_id
@@ -20448,7 +20468,14 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
       return $options.checkout && $options.checkout.apply($options, arguments);
     }),
     "class": "checkout-button"
-  }, "購入する")])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_8, [].concat(_hoisted_10)))]);
+  }, "購入する")])) : ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_8, [].concat(_hoisted_10))), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_11, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_router_link, {
+    to: "/"
+  }, {
+    "default": (0,vue__WEBPACK_IMPORTED_MODULE_0__.withCtx)(function () {
+      return [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createTextVNode)("商品リストへ戻る")];
+    }),
+    _: 1 /* STABLE */
+  })])]);
 }
 
 /***/ }),
@@ -27141,7 +27168,7 @@ __webpack_require__.r(__webpack_exports__);
 
 var ___CSS_LOADER_EXPORT___ = _node_modules_css_loader_dist_runtime_api_js__WEBPACK_IMPORTED_MODULE_0___default()(function(i){return i[1]});
 // Module
-___CSS_LOADER_EXPORT___.push([module.id, "\n.cart-container[data-v-e7ab8a3c] {\n    max-width: 800px;\n    margin: 0 auto;\n    padding: 20px;\n}\n.cart-items[data-v-e7ab8a3c] {\n    margin-top: 20px;\n}\n.cart-table[data-v-e7ab8a3c] {\n    width: 100%;\n    border-collapse: collapse;\n    margin-bottom: 20px;\n}\n.cart-table thead[data-v-e7ab8a3c] {\n    background-color: #f8f8f8;\n}\n.cart-table th[data-v-e7ab8a3c], .cart-table td[data-v-e7ab8a3c] {\n    border: 1px solid #ddd;\n    padding: 8px;\n    text-align: left;\n}\n.cart-table th[data-v-e7ab8a3c] {\n    font-weight: bold;\n}\n.total-price[data-v-e7ab8a3c] {\n    font-size: 1.2em;\n    font-weight: bold;\n    text-align: right;\n}\n.empty-cart[data-v-e7ab8a3c] {\n    text-align: center;\n    margin-top: 20px;\n}\n.checkout-button[data-v-e7ab8a3c] {\n    background-color: #4CAF50; /* 緑色 */\n    color: white;\n    padding: 15px 32px;\n    text-align: center;\n    text-decoration: none;\n    display: inline-block;\n    font-size: 16px;\n    margin: 4px 2px;\n    cursor: pointer;\n    border: none;\n    border-radius: 4px;\n}\n", ""]);
+___CSS_LOADER_EXPORT___.push([module.id, "\n.cart-container[data-v-e7ab8a3c] {\n    max-width: 800px;\n    margin: 0 auto;\n    padding: 20px;\n}\n.cart-items[data-v-e7ab8a3c] {\n    margin-top: 20px;\n}\n.cart-table[data-v-e7ab8a3c] {\n    width: 100%;\n    border-collapse: collapse;\n    margin-bottom: 20px;\n}\n.cart-table thead[data-v-e7ab8a3c] {\n    background-color: #f8f8f8;\n}\n.cart-table th[data-v-e7ab8a3c], .cart-table td[data-v-e7ab8a3c] {\n    border: 1px solid #ddd;\n    padding: 8px;\n    text-align: left;\n}\n.cart-table th[data-v-e7ab8a3c] {\n    font-weight: bold;\n}\n.total-price[data-v-e7ab8a3c] {\n    font-size: 1.2em;\n    font-weight: bold;\n    text-align: right;\n}\n.empty-cart[data-v-e7ab8a3c] {\n    text-align: center;\n    margin-top: 20px;\n}\n.checkout-button[data-v-e7ab8a3c] {\n    background-color: #4CAF50; /* 緑色 */\n    color: white;\n    padding: 15px 32px;\n    text-align: center;\n    text-decoration: none;\n    display: inline-block;\n    font-size: 16px;\n    margin: 4px 2px;\n    cursor: pointer;\n    border: none;\n    border-radius: 4px;\n}\n.link-container[data-v-e7ab8a3c] {\n    display: block;\n    text-align: right;\n}\n", ""]);
 // Exports
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (___CSS_LOADER_EXPORT___);
 
